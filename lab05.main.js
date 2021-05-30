@@ -94,50 +94,9 @@ class ServiceNowAdapter extends EventEmitter {
    *   that handles the response.
    */
   healthcheck(callback) {
-   this.getRecord((result, error) => {
-     /**
-      * For this lab, complete the if else conditional
-      * statements that check if an error exists
-      * or the instance was hibernating. You must write
-      * the blocks for each branch.
-      */
-     if (error) {
-       /**
-        * Write this block.
-        * If an error was returned, we need to emit OFFLINE.
-        * Log the returned error using IAP's global log object
-        * at an error severity. In the log message, record
-        * this.id so an administrator will know which ServiceNow
-        * adapter instance wrote the log message in case more
-        * than one instance is configured.
-        * If an optional IAP callback function was passed to
-        * healthcheck(), execute it passing the error seen as an argument
-        * for the callback's errorMessage parameter.
-        */
-        this.emitOffline();
-        log.error("getRecord method returned an error; current instance id is: " + this.id + "the error is: " + error);
-        if (callback) {
-            callback(result, error);
-        }
-        
-     } else {
-       /**
-        * Write this block.
-        * If no runtime problems were detected, emit ONLINE.
-        * Log an appropriate message using IAP's global log object
-        * at a debug severity.
-        * If an optional IAP callback function was passed to
-        * healthcheck(), execute it passing this function's result
-        * parameter as an argument for the callback function's
-        * responseData parameter.
-        */
-        this.emitOnline();
-        log.debug("No runtime problems were detected. Calling emitOnline()");
-        if (callback) {
-            callback(result, error);
-        }
-     }
-   });
+    // We will build this method in a later lab. For now, it will emulate
+    // a healthy integration by emmitting ONLINE.
+    this.emitOnline();
   }
 
   /**
@@ -193,18 +152,8 @@ class ServiceNowAdapter extends EventEmitter {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-     
-     var ins = this.connector.get(callback);
-     if (typeof(ins) === object && "body" in ins){
-         var arrObj = JSON.parse(ins.body).result;
-         arrObj.forEach((element) => {
-             _.pick(element, "number", "active", "priority", "description", "work_start", "work_end", "sys_id");
-         })
-         return arrObj.map(item => {return { ...item, change_ticket_number: item.number, change_ticket_key: item.sys_id}; })
-     }
-     else {
-         return this.connector.get(callback);
-     }
+     const connection = this.connector;
+     connection.get(callback);
   }
 
   /**
@@ -223,23 +172,8 @@ class ServiceNowAdapter extends EventEmitter {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-     var ins = this.connector.get(callback);
-     if (typeof(ins) === object && "body" in ins){
-         var obj = JSON.parse(ins.body).result;
-         obj => {
-             _.pick(obj, "number", "active", "priority", "description", "work_start", "work_end", "sys_id");
-         }
-         obj["change_ticket_number"] = obj["number"];
-         delete obj["number"];
-         obj["change_ticket_key"] = obj["sys_id"];
-         delete obj["sys_id"]
-         return obj;
-     }
-     else {
-         return this.connector.get(callback);
-     }
-
-     
+     const connection = this.connector;
+     connection.post(callback);
   }
 }
 
