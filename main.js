@@ -194,8 +194,8 @@ class ServiceNowAdapter extends EventEmitter {
      * get() takes a callback function.
      */
      
-     var ins = this.connector.get(callback);
-     if (typeof(ins) === object && "body" in ins){
+     let ins = this.connector.get(callback);
+     if (typeof(ins) === "object" && "body" in ins){
          var arrObj = JSON.parse(ins.body).result;
          arrObj.forEach((element) => {
              _.pick(element, "number", "active", "priority", "description", "work_start", "work_end", "sys_id");
@@ -223,8 +223,8 @@ class ServiceNowAdapter extends EventEmitter {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-     var ins = this.connector.get(callback);
-     if (typeof(ins) === object && "body" in ins){
+     let ins = this.connector.post(callback);
+     if (typeof(ins) === "object" && "body" in ins){
          var obj = JSON.parse(ins.body).result;
          obj => {
              _.pick(obj, "number", "active", "priority", "description", "work_start", "work_end", "sys_id");
@@ -232,7 +232,7 @@ class ServiceNowAdapter extends EventEmitter {
          obj["change_ticket_number"] = obj["number"];
          delete obj["number"];
          obj["change_ticket_key"] = obj["sys_id"];
-         delete obj["sys_id"]
+         delete obj["sys_id"];
          return obj;
      }
      else {
